@@ -1,0 +1,2 @@
+float32 waterTemp
+float64 range

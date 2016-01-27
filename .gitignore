@@ -60,3 +60,10 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+#generated files
+#numpy data files
+.npy
+#plots
+.pdf
+.png

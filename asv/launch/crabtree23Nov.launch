@@ -1,0 +1,56 @@
+<launch>
+  <!--port allocation-->
+  <param name="arduino_port" value="/dev/arduino_nano" />
+  <param name="batt_port" value="/dev/battery" />
+  <param name="xbee_tty" value="/dev/xbee" />
+  <param name="gps_port1" value="/dev/gps0" />
+  <param name="gps_port2" value="/dev/gps1" />  
+  <param name="gps_port3" value="/dev/gps2" />  
+  <param name="imu_port" value="/dev/imu" />
+  <param name="motor_ttl" value = "/dev/pololu_ttl" />
+
+  <node pkg="rosbag" type="record" name="full" args="-o tue15sepcrabtree -a" required="true"/>
+
+  <!-- sensors  -->
+  <param name="leak" value="dry" />
+  <param name="IMU_Adj" value="1.8" /><!-- prev 1.65 -->
+
+  <rosparam param="IMU_acc_adj">[0.0, 0.0, -8.6 ]</rosparam>
+  <rosparam param="IMU_acc_var">[0.1, 0.1, 0.1 ]</rosparam>
+  <rosparam param="GPS_loc_var">[0.007, 0.007, 0.007 ]</rosparam>
+  <rosparam param="GPS_zero">[327404, 6226396 ]</rosparam>
+  <rosparam param="KF_model_var">[1.0]</rosparam>
+  <param name="sensor_angle_rad" value="-1.570796327" /><!-- -90 degrees from horizon-->
+
+  <node name="KF_Pose" pkg="sensors" type="kfposepub.py" output="screen" required="false" />
+  <node name="arduinosensors" pkg="sensors" type="ardsens.py" output="screen" required="true" />
+  <node name="BatteryInfo" pkg="sensors" type="oceanserver.py" output="screen" required="false" />
+  <node name="SingleBeamSonar" pkg="sensors" type="SingleBeamSonar.py" output="screen" required="false" />
+  <node name="CpuMem" pkg="sensors" type="cpuMemWatch.py" output="screen" required="false" />
+
+  <!-- ASV_nav -->
+  <rosparam param="poly_boundaries_E">[0,-100,-100,50]</rosparam>
+  <rosparam param="poly_boundaries_N">[0,0,-40,-40]</rosparam>
+  <param name="target_depth" value="4.0" />
+  <param name="repeat_HP_opt" value="30" />
+  <param name="den" value="5.0" />
+  <param name="CLrate" value="5" />
+  <param name="search_radius" value="5" />
+  <param name="complete_radius_buffer" value="150" />
+
+  <node name="Nav" pkg="navigation" type="ContourBoundary.py" output="screen" required="false" />
+  <node name="HyperEst" pkg="navigation" type="OptGP.py" output="screen" required="false" />
+
+  <!-- motors -->
+  <param name="motors_attached" value="True" />
+  <param name="p_gain" value="6.0" />
+  <param name="max_thrust" value ="75.0" />
+  <node name="motor_controller" pkg="motors" type="heading_control_p.py" output="screen" required="true" />
+
+  <!-- xbee -->
+  <node name="rostoserial" pkg="xbee" type="rostoserial.py" output="screen" required="true" />
+  
+  <!-- other-->
+  <param name="mode" value="manual" />
+
+</launch>

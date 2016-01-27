@@ -1,0 +1,3 @@
+string goalStatus
+float32 wayPtEast
+float32 wayPtNorth

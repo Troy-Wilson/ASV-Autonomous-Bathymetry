@@ -1,0 +1,16 @@
+<package>
+  <description brief="ASV">
+
+     ASV
+
+  </description>
+  <author>Troy</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ASV</url>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+
+</package>
+
+
